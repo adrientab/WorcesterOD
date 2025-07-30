@@ -8,6 +8,11 @@ import contextily as ctx
 import numpy as np
 from matplotlib.widgets import Slider, Button
 from pyproj import Transformer
+import warnings
+
+# Suppress OGR field type warnings
+warnings.filterwarnings('ignore', message='.*unsupported OGR type.*')
+
 
 # BRT station coordinates (WGS84)
 brt_stations = [
@@ -32,7 +37,7 @@ transformer = Transformer.from_crs("epsg:4326", "epsg:3857", always_xy=True)
 brt_xy = [transformer.transform(station['lon'], station['lat']) for station in brt_stations]
 
 # State for BRT overlay
-overlay_brt = {'show': False}
+overlay_brt = [False]
 
 # Load city boundary as a polygon
 city_gdf = gpd.read_file('city_boundary.geojson')
@@ -118,8 +123,61 @@ buttons = [Button(ax, label) for ax, label in zip(button_axes, ['Weekday', 'Satu
 pretty_day = {'W': 'Weekdays', 'SAT': 'Saturday', 'SUN': 'Sunday', 'ALL': 'All Days'}
 
 # Add a toggle button for BRT overlay
-brt_button_ax = plt.axes([0.82, 0.10, 0.15, 0.06])
-brt_button = Button(brt_button_ax, 'Toggle BRT Stations')
+brt_button_ax = plt.axes([0.82, 0.10, 0.075, 0.06])
+brt_button = Button(brt_button_ax, 'Toggle\nBRT Stations')
+
+# Add a toggle button for POI overlay
+poi_button_ax = plt.axes([0.745, 0.10, 0.075, 0.06])
+poi_button = Button(poi_button_ax, 'Toggle POIs')
+
+# Load POI data from JSON file
+with open('POIs.json', 'r') as f:
+    poi_json = json.load(f)
+
+# Define color and marker mapping for different POI types
+poi_style_map = {
+    'fire_station': {'color': 'firebrick', 'marker': 'F'},
+    'library': {'color': 'brown', 'marker': 'L'},
+    'school': {'color': 'blue', 'marker': 'S'},
+    'courthouse': {'color': 'darkblue', 'marker': 'C'},
+    'supermarket': {'color': 'orange', 'marker': 'S'},
+    'post_office': {'color': 'darkred', 'marker': 'PO'},
+    'police': {'color': 'navy', 'marker': 'P'},
+    'attraction': {'color': 'yellow', 'marker': 'A'}
+}
+
+# Extract POI data from JSON
+poi_data = []
+for element in poi_json['elements']:
+    if element['type'] == 'node' and 'tags' in element:
+        tags = element['tags']
+        # Check for amenity type
+        amenity_type = None
+        if 'amenity' in tags:
+            amenity_type = tags['amenity']
+        elif 'shop' in tags:
+            amenity_type = tags['shop']
+        elif 'tourism' in tags:
+            amenity_type = tags['tourism']
+        
+        if amenity_type and amenity_type in poi_style_map:
+            poi_data.append({
+                'type': amenity_type,
+                'lat': element['lat'],
+                'lon': element['lon'],
+                'color': poi_style_map[amenity_type]['color'],
+                'marker': poi_style_map[amenity_type]['marker'],
+                'name': tags.get('name', amenity_type)
+            })
+
+
+# Transform POI coordinates to map projection
+poi_xy = [transformer.transform(poi['lon'], poi['lat']) for poi in poi_data]
+
+# State for POI overlay
+overlay_poi = [False]
+
+
 
 # Plot function
 def plot_highlight(hour):
@@ -157,9 +215,15 @@ def plot_highlight(hour):
                     fontsize=14, color="black", va="top", ha="left",
                     bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
         # Overlay BRT stations if toggled
-        if overlay_brt['show']:
+        if overlay_brt[0]:
             xs, ys = zip(*brt_xy)
             ax.scatter(xs, ys, c='deepskyblue', s=80, marker='o', edgecolor='black', zorder=10, label='BRT Station')
+        # Overlay POIs if toggled
+        if overlay_poi[0]:
+            for i, (poi, (x, y)) in enumerate(zip(poi_data, poi_xy)):
+                ax.scatter(x, y, c=poi['color'], s=100, marker='o', edgecolor='black', zorder=11)
+                ax.text(x, y, poi['marker'], fontsize=10, color='white', ha='center', va='center', 
+                    weight='bold', zorder=12)
     plt.draw()
 
 plot_highlight(0)
@@ -181,9 +245,14 @@ for btn, day in zip(buttons, day_types):
 
 # BRT toggle button callback
 def toggle_brt(event):
-    overlay_brt['show'] = not overlay_brt['show']
+    overlay_brt[0] = not overlay_brt[0]
     plot_highlight(int(slider.val))
 brt_button.on_clicked(toggle_brt)
 
-plt.tight_layout(rect=[0, 0.15, 1, 0.88])  # Ensure layout fits below and above
+# POI toggle button callback
+def toggle_poi(event):
+    overlay_poi[0] = not overlay_poi[0]
+    plot_highlight(int(slider.val))
+poi_button.on_clicked(toggle_poi)
+
 plt.show()

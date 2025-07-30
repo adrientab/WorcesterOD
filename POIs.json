@@ -1,0 +1,450 @@
+{
+    "version": 0.6,
+    "generator": "Overpass API 0.7.62.7 375dc00a",
+    "osm3s": {
+      "timestamp_osm_base": "2025-07-30T04:44:28Z",
+      "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+    },
+    "elements": [
+  
+  {
+    "type": "node",
+    "id": 257494324,
+    "lat": 42.2510473,
+    "lon": -71.7929041,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "98",
+      "addr:postcode": "01604",
+      "addr:state": "MA",
+      "addr:street": "Providence Street",
+      "amenity": "fire_station",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS), Massachusetts Emergency Management Agency",
+      "name": "Worcester Fire Department",
+      "source_url": "http://mass.gov/mgis/firestations.htm"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257494354,
+    "lat": 42.2564762,
+    "lon": -71.8241422,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "424",
+      "addr:postcode": "01610",
+      "addr:state": "MA",
+      "addr:street": "Park Avenue",
+      "amenity": "fire_station",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS), Massachusetts Emergency Management Agency",
+      "check_date": "2024-09-01",
+      "name": "Worcester Fire Department",
+      "office": "Park Avenue Fire Station",
+      "source_url": "http://mass.gov/mgis/firestations.htm"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257494723,
+    "lat": 42.2777393,
+    "lon": -71.8034659,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "141",
+      "addr:postcode": "01605",
+      "addr:state": "MA",
+      "addr:street": "Grove Street",
+      "amenity": "fire_station",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS), Massachusetts Emergency Management Agency",
+      "name": "Worcester Fire Department",
+      "note": "office Headquarters",
+      "source:url": "http://mass.gov/mgis/firestations.htm"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257535685,
+    "lat": 42.2702576,
+    "lon": -71.7914922,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "27",
+      "addr:postcode": "01605",
+      "addr:state": "MA",
+      "addr:street": "Edward Street",
+      "amenity": "library",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "office": "Venerini Academy",
+      "region": "Central",
+      "source:url": "http://mass.gov/mgis/libraries.htm",
+      "type": "School"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257535823,
+    "lat": 42.2680572,
+    "lon": -71.8007949,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "2",
+      "addr:postcode": "01608",
+      "addr:state": "MA",
+      "addr:street": "Main Street",
+      "amenity": "library",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "name": "Worcester Law Library",
+      "office": "Massachusetts Trial Court Law Libraries",
+      "region": "Central",
+      "source:url": "http://mass.gov/mgis/libraries.htm",
+      "type": "Special-Law"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257536032,
+    "lat": 42.2619800,
+    "lon": -71.8022300,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "20",
+      "addr:state": "MA",
+      "addr:street": "Franklin Street",
+      "amenity": "library",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "name": "News Library",
+      "office": "Worcester Telegram And Gazette",
+      "region": "Central",
+      "source:url": "http://mass.gov/mgis/libraries.htm",
+      "type": "Special"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257536038,
+    "lat": 42.2644281,
+    "lon": -71.8004356,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "19",
+      "addr:postcode": "01608",
+      "addr:state": "MA",
+      "addr:street": "Foster Street",
+      "amenity": "library",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "name": "Blais Family Library",
+      "office": "Massachusetts College Of Pharmacy",
+      "region": "Central",
+      "source:url": "http://mass.gov/mgis/libraries.htm",
+      "type": "Academic"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257536984,
+    "lat": 42.2648064,
+    "lon": -71.8046905,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "30",
+      "addr:postcode": "01609",
+      "addr:state": "MA",
+      "addr:street": "Elm Street",
+      "amenity": "library",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "name": "Worcester Historical Museum Research Library",
+      "office": "Worcester Historical Museum",
+      "region": "Central",
+      "source:url": "http://mass.gov/mgis/libraries.htm",
+      "type": "Special"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257579393,
+    "lat": 42.2764079,
+    "lon": -71.7999251,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "85",
+      "addr:postcode": "01605",
+      "addr:state": "MA",
+      "addr:street": "Prescott Street",
+      "amenity": "school",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "grades": "11,12",
+      "massgis:school_id": "04680505",
+      "name": "Ma Academy for Math and Science School",
+      "phone": "+1 508-831-5859",
+      "source:url": "http://mass.gov/mgis/schools.htm",
+      "type": "Public"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257579997,
+    "lat": 42.2654330,
+    "lon": -71.8021663,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "4",
+      "addr:postcode": "01602",
+      "addr:state": "MA",
+      "addr:street": "Main Street",
+      "amenity": "school",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "grades": "SP",
+      "massgis:school_id": "03480820",
+      "name": "G Stanley Hall School/The Bridge of Central MA",
+      "phone": "+1 508-755-3698",
+      "source:url": "http://mass.gov/mgis/schools.htm",
+      "type": "Approved Special Education"
+    }
+  },
+  {
+    "type": "node",
+    "id": 257580773,
+    "lat": 42.2705362,
+    "lon": -71.7914097,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "23",
+      "addr:postcode": "01605",
+      "addr:state": "MA",
+      "addr:street": "Edward Street",
+      "amenity": "school",
+      "attribution": "Office of Geographic and Environmental Information (MassGIS)",
+      "grades": "PK,K,1,2,3,4,5,6,7,8",
+      "massgis:school_id": "03480930",
+      "name": "Venerini Academy",
+      "phone": "+1 508-753-3210",
+      "source:url": "http://mass.gov/mgis/schools.htm",
+      "type": "Private"
+    }
+  },
+  {
+    "type": "node",
+    "id": 358263145,
+    "lat": 42.2556490,
+    "lon": -71.7828485,
+    "tags": {
+      "amenity": "school",
+      "ele": "180",
+      "gnis:feature_id": "601954",
+      "name": "Saint Stephen Elementary School"
+    }
+  },
+  {
+    "type": "node",
+    "id": 358263150,
+    "lat": 42.2612043,
+    "lon": -71.8072935,
+    "tags": {
+      "amenity": "school",
+      "ele": "151",
+      "gnis:feature_id": "601957",
+      "name": "Saint Pauls School"
+    }
+  },
+  {
+    "type": "node",
+    "id": 358283069,
+    "lat": 42.2533762,
+    "lon": -71.8152751,
+    "tags": {
+      "amenity": "school",
+      "ele": "167",
+      "gnis:feature_id": "1980667",
+      "name": "St. Peter Central Catholic Elementary School"
+    }
+  },
+  {
+    "type": "node",
+    "id": 367777805,
+    "lat": 42.2604864,
+    "lon": -71.8037611,
+    "tags": {
+      "addr:state": "MA",
+      "amenity": "courthouse",
+      "ele": "148",
+      "gnis:feature_id": "603936",
+      "name": "Federal Courthouse",
+      "source": "USGS Geonames",
+      "wikipedia": "en:Harold D. Donohue Federal Building and United States Courthouse"
+    }
+  },
+  {
+    "type": "node",
+    "id": 367777937,
+    "lat": 42.2639820,
+    "lon": -71.8145159,
+    "tags": {
+      "addr:state": "MA",
+      "amenity": "fire_station",
+      "ele": "151",
+      "gnis:feature_id": "1980261",
+      "name": "Pleasant Street Firehouse",
+      "source": "USGS Geonames",
+      "wikidata": "Q7203971"
+    }
+  },
+  {
+    "type": "node",
+    "id": 367778606,
+    "lat": 42.2729850,
+    "lon": -71.7924184,
+    "tags": {
+      "addr:state": "MA",
+      "amenity": "library",
+      "ele": "130",
+      "gnis:feature_id": "1979955",
+      "name": "Homer Gage Medical Library",
+      "source": "USGS Geonames"
+    }
+  },
+  {
+    "type": "node",
+    "id": 367779161,
+    "lat": 42.2659000,
+    "lon": -71.8011000,
+    "tags": {
+      "addr:state": "MA",
+      "amenity": "library",
+      "ele": "148",
+      "gnis:feature_id": "2342008",
+      "name": "Bowditch and Dewey Library",
+      "source": "USGS Geonames"
+    }
+  },
+  {
+    "type": "node",
+    "id": 367779215,
+    "lat": 42.2643992,
+    "lon": -71.7966807,
+    "tags": {
+      "addr:state": "MA",
+      "amenity": "library",
+      "ele": "143",
+      "gnis:feature_id": "2342201",
+      "name": "Dumphy Memorial Library",
+      "source": "USGS Geonames"
+    }
+  },
+  {
+    "type": "node",
+    "id": 1037932494,
+    "lat": 42.2593458,
+    "lon": -71.8260439,
+    "tags": {
+      "name": "Big Y",
+      "shop": "supermarket"
+    }
+  },
+  {
+    "type": "node",
+    "id": 1310787476,
+    "lat": 42.2633068,
+    "lon": -71.8158857,
+    "tags": {
+      "name": "Ed Hyder's Mediterranean Marketplace",
+      "shop": "supermarket"
+    }
+  },
+  {
+    "type": "node",
+    "id": 1666191412,
+    "lat": 42.2746799,
+    "lon": -71.8083087,
+    "tags": {
+      "amenity": "post_office",
+      "check_date:opening_hours": "2022-05-27",
+      "level": "0",
+      "name": "WPI Mail Services",
+      "opening_hours": "Mo-Fr 08:30-16:30"
+    }
+  },
+  {
+    "type": "node",
+    "id": 2430655636,
+    "lat": 42.2734019,
+    "lon": -71.8051703,
+    "tags": {
+      "amenity": "police",
+      "level": "-1",
+      "name": "WPI Campus Police"
+    }
+  },
+  {
+    "type": "node",
+    "id": 4709351603,
+    "lat": 42.2526639,
+    "lon": -71.8221246,
+    "tags": {
+      "amenity": "library",
+      "name": "Language Arts Resource Center",
+      "operator": "Clark University"
+    }
+  },
+  {
+    "type": "node",
+    "id": 4709351605,
+    "lat": 42.2522761,
+    "lon": -71.8211906,
+    "tags": {
+      "amenity": "library",
+      "name": "Rose Library",
+      "operator": "Clark University"
+    }
+  },
+  {
+    "type": "node",
+    "id": 5680099582,
+    "lat": 42.2544218,
+    "lon": -71.8186048,
+    "tags": {
+      "amenity": "school",
+      "name": "Woodland Academy"
+    }
+  },
+  {
+    "type": "node",
+    "id": 8754211306,
+    "lat": 42.2571916,
+    "lon": -71.7991739,
+    "tags": {
+      "name": "Worcester Wall",
+      "tourism": "attraction"
+    }
+  },
+  {
+    "type": "node",
+    "id": 9284590979,
+    "lat": 42.2551526,
+    "lon": -71.8146268,
+    "tags": {
+      "addr:city": "Worcester",
+      "addr:housenumber": "4",
+      "addr:state": "MA",
+      "addr:street": "May Street",
+      "name": "America's Food Basket",
+      "shop": "supermarket"
+    }
+  },
+  {
+    "type": "node",
+    "id": 10102558851,
+    "lat": 42.2731125,
+    "lon": -71.8018032,
+    "tags": {
+      "amenity": "library",
+      "internet_access": "yes",
+      "internet_access:fee": "no",
+      "name": "Worcester Art Museum Library",
+      "opening_hours": "We-Su 10:00-17:00",
+      "operator": "Worcester Art Museum",
+      "ref:isil": "US-mwm"
+    }
+  }
+  
+    ]
+  }
