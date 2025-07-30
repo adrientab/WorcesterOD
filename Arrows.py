@@ -111,56 +111,82 @@ pretty_day = {'W': 'Weekdays', 'SAT': 'Saturday', 'SUN': 'Sunday', 'ALL': 'All D
 brt_button_ax = plt.axes([0.82, 0.10, 0.075, 0.06])
 brt_button = Button(brt_button_ax, 'Toggle\nBRT Stations')
 
-# Add a toggle button for POI overlay
+# Add a toggle button for landmark overlay
 poi_button_ax = plt.axes([0.745, 0.10, 0.075, 0.06])
-poi_button = Button(poi_button_ax, 'Toggle POIs')
+poi_button = Button(poi_button_ax, 'Toggle\nLandmarks')
 
-# Load POI data from JSON file
-with open('POIs.json', 'r') as f:
-    poi_json = json.load(f)
-
-# Define color and marker mapping for different POI types
-poi_style_map = {
-    'fire_station': {'color': 'firebrick', 'marker': 'F'},
-    'library': {'color': 'brown', 'marker': 'L'},
-    'school': {'color': 'blue', 'marker': 'S'},
-    'courthouse': {'color': 'darkblue', 'marker': 'C'},
-    'supermarket': {'color': 'orange', 'marker': 'S'},
-    'post_office': {'color': 'darkred', 'marker': 'PO'},
-    'police': {'color': 'navy', 'marker': 'P'},
-    'attraction': {'color': 'yellow', 'marker': 'A'}
+# Worcester landmarks data
+worcester_landmarks = {
+    'schools': [
+        {'name': 'Worcester Polytechnic Institute (WPI)', 'lat': 42.2746, 'lon': -71.8063, 'type': 'university'},
+        {'name': 'Clark University', 'lat': 42.2507, 'lon': -71.8229, 'type': 'university'},
+        {'name': 'College of the Holy Cross', 'lat': 42.3378, 'lon': -71.8064, 'type': 'university'},
+        {'name': 'UMass Medical School', 'lat': 42.2733, 'lon': -71.7622, 'type': 'university'},
+        {'name': 'Worcester State University', 'lat': 42.2669, 'lon': -71.8644, 'type': 'university'},
+        {'name': 'Assumption University', 'lat': 42.2584, 'lon': -71.8483, 'type': 'university'},
+        {'name': 'Quinsigamond Community College', 'lat': 42.2583, 'lon': -71.8230, 'type': 'college'},
+        {'name': 'Worcester Academy', 'lat': 42.2625, 'lon': -71.8028, 'type': 'high_school'},
+        {'name': 'Bancroft School', 'lat': 42.2792, 'lon': -71.8222, 'type': 'high_school'},
+        {'name': 'Worcester Technical High School', 'lat': 42.2750, 'lon': -71.8400, 'type': 'high_school'},
+    ],
+    
+    'employment': [
+        {'name': 'UMass Memorial Medical Center', 'lat': 42.2733, 'lon': -71.7622, 'type': 'hospital'},
+        {'name': 'Saint Vincent Hospital', 'lat': 42.2681, 'lon': -71.7975, 'type': 'hospital'},
+        {'name': 'The Hanover Insurance Group', 'lat': 42.2625, 'lon': -71.8028, 'type': 'corporate'},
+        {'name': 'Polar Beverages', 'lat': 42.2750, 'lon': -71.8300, 'type': 'corporate'},
+        {'name': 'Fallon Health', 'lat': 42.2650, 'lon': -71.8100, 'type': 'corporate'},
+        {'name': 'Reliant Medical Group', 'lat': 42.2700, 'lon': -71.8200, 'type': 'medical'},
+        {'name': 'Worcester Recovery Center', 'lat': 42.2600, 'lon': -71.8000, 'type': 'hospital'},
+        {'name': 'Allegro MicroSystems', 'lat': 42.2800, 'lon': -71.8100, 'type': 'corporate'},
+        {'name': 'Saint-Gobain', 'lat': 42.2900, 'lon': -71.8200, 'type': 'corporate'},
+        {'name': 'Family Health Center', 'lat': 42.2550, 'lon': -71.8150, 'type': 'medical'},
+    ],
+    
+    'commercial': [
+        {'name': 'CitySquare/Mercantile Center', 'lat': 42.2625, 'lon': -71.8028, 'type': 'shopping'},
+        {'name': 'Downtown Worcester', 'lat': 42.2626, 'lon': -71.8023, 'type': 'shopping'},
+        {'name': 'Worcester Public Market', 'lat': 42.2600, 'lon': -71.8050, 'type': 'shopping'},
+        #{'name': 'The Shops at Blackstone Valley', 'lat': 42.1333, 'lon': -71.6167, 'type': 'shopping'},
+        {'name': 'Greendale Mall Area', 'lat': 42.2333, 'lon': -71.8667, 'type': 'shopping'},
+        {'name': 'Midtown Mall', 'lat': 42.2620, 'lon': -71.8020, 'type': 'shopping'},
+        {'name': 'Lincoln Plaza', 'lat': 42.2700, 'lon': -71.8300, 'type': 'shopping'},
+        {'name': 'Park Avenue Shopping', 'lat': 42.2800, 'lon': -71.8400, 'type': 'shopping'},
+    ]
 }
 
-# Extract POI data from JSON
-poi_data = []
-for element in poi_json['elements']:
-    if element['type'] == 'node' and 'tags' in element:
-        tags = element['tags']
-        # Check for amenity type
-        amenity_type = None
-        if 'amenity' in tags:
-            amenity_type = tags['amenity']
-        elif 'shop' in tags:
-            amenity_type = tags['shop']
-        elif 'tourism' in tags:
-            amenity_type = tags['tourism']
-        
-        if amenity_type and amenity_type in poi_style_map:
-            poi_data.append({
-                'type': amenity_type,
-                'lat': element['lat'],
-                'lon': element['lon'],
-                'color': poi_style_map[amenity_type]['color'],
-                'marker': poi_style_map[amenity_type]['marker'],
-                'name': tags.get('name', amenity_type)
+# Define color and marker mapping for different landmark types
+landmark_style_map = {
+    'university': {'color': 'purple', 'marker': 'U'},
+    'college': {'color': 'purple', 'marker': 'C'},
+    'high_school': {'color': 'blue', 'marker': 'H'},
+    'hospital': {'color': 'red', 'marker': 'H'},
+    'corporate': {'color': 'darkgreen', 'marker': 'C'},
+    'medical': {'color': 'pink', 'marker': 'M'},
+    'shopping': {'color': 'orange', 'marker': 'S'}
+}
+
+# Flatten landmarks into a single list
+landmark_data = []
+for category, landmarks in worcester_landmarks.items():
+    for landmark in landmarks:
+        landmark_type = landmark['type']
+        if landmark_type in landmark_style_map:
+            landmark_data.append({
+                'name': landmark['name'],
+                'lat': landmark['lat'],
+                'lon': landmark['lon'],
+                'type': landmark_type,
+                'category': category,
+                'color': landmark_style_map[landmark_type]['color'],
+                'marker': landmark_style_map[landmark_type]['marker']
             })
 
-# Transform POI coordinates to map projection
-poi_xy = [transformer.transform(poi['lon'], poi['lat']) for poi in poi_data]
+# Transform landmark coordinates to map projection
+landmark_xy = [transformer.transform(landmark['lon'], landmark['lat']) for landmark in landmark_data]
 
-
-# State for POI overlay
-overlay_poi = [False]
+# State for landmark overlay
+overlay_landmarks = [False]
 
 # Custom colormap from red to green, with more intermediate steps for better color variation
 red_green_cmap = LinearSegmentedColormap.from_list('RedGreen', ['red', 'darkorange', 'limegreen', 'green'], N=256)
@@ -213,12 +239,12 @@ def plot_highlight(hour):
     if overlay_brt[0]:
         xs, ys = zip(*brt_xy)
         ax.scatter(xs, ys, c='deepskyblue', s=80, marker='o', edgecolor='black', zorder=10, label='BRT Station')
-    # Overlay POIs if toggled
-    if overlay_poi[0]:
-        for i, (poi, (x, y)) in enumerate(zip(poi_data, poi_xy)):
-            ax.scatter(x, y, c=poi['color'], s=100, marker='o', edgecolor='black', zorder=11)
-            ax.text(x, y, poi['marker'], fontsize=10, color='white', ha='center', va='center', 
-                   weight='bold', zorder=12)
+    # Overlay landmarks if toggled
+    if overlay_landmarks[0]:
+        for i, (landmark, (x, y)) in enumerate(zip(landmark_data, landmark_xy)):
+            ax.scatter(x, y, c=landmark['color'], s=100, marker='o', edgecolor='black', zorder=11)
+            ax.text(x, y, landmark['name'], fontsize=3.5, color='white', ha='center', va='center', 
+                   weight='bold', zorder=12, bbox=dict(facecolor='black', alpha=0.7, edgecolor='none', pad=1))
     plt.draw()
 
 plot_highlight(0)
@@ -246,7 +272,7 @@ brt_button.on_clicked(toggle_brt)
 
 # POI toggle button callback
 def toggle_poi(event):
-    overlay_poi[0] = not overlay_poi[0]
+    overlay_landmarks[0] = not overlay_landmarks[0]
     plot_highlight(int(slider.val))
 poi_button.on_clicked(toggle_poi)
 
