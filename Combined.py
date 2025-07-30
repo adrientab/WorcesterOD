@@ -102,16 +102,16 @@ gdf["centroid"] = gdf.geometry.centroid
 
 
 # State for current day type
-current_day = 'W'  # Use list for mutability in nested functions
+current_day = ['W']  # Use list for mutability in nested functions
 
 # Update to 3 subplots for Origins, Destinations, Combined
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(36, 12))
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(24, 12))
 plt.subplots_adjust(bottom=0.22, top=0.88)  # Increase top margin to avoid title overlap
 
-slider_ax = plt.axes([0.2, 0.10, 0.6, 0.03])
+slider_ax = plt.axes([0.1, 0.10, 0.6, 0.03])
 slider = Slider(slider_ax, 'Hour', 0, 23, valinit=0, valstep=1)
 
-button_axes = [plt.axes([0.2 + i*0.2, 0.02, 0.18, 0.06]) for i in range(4)]
+button_axes = [plt.axes([0.1 + i*0.2, 0.02, 0.18, 0.06]) for i in range(4)]
 buttons = [Button(ax, label) for ax, label in zip(button_axes, ['Weekday', 'Saturday', 'Sunday', 'All Days'])]
 
 # Add a mapping for pretty day names
@@ -122,13 +122,12 @@ brt_button_ax = plt.axes([0.82, 0.10, 0.15, 0.06])
 brt_button = Button(brt_button_ax, 'Toggle BRT Stations')
 
 # Plot function
-# Now includes combined data in ax3
-
 def plot_highlight(hour):
-    for ax, top_regions, title, label in zip(
+    # Set main title with day and hour
+    fig.suptitle(f"TOP {NUM_TOP} Regions for {pretty_day[current_day[0]]}, Hour {hour:02d}:00", fontsize=18, y=0.97)
+    for ax, top_regions, title in zip(
         [ax1, ax2, ax3],
-        [top_origins_per_file[current_day][hour], top_destinations_per_file[current_day][hour], top_combined_per_file[current_day][hour]],
-        [f"Top {NUM_TOP} Origins", f"Top {NUM_TOP} Destinations", f"Top {NUM_TOP} Regions (Origin+Dest)",],
+        [top_origins_per_file[current_day[0]][hour], top_destinations_per_file[current_day[0]][hour], top_combined_per_file[current_day[0]][hour]],
         ["Origins", "Destinations", "Combined"]):
         ax.cla()
         region_indices = [region for region, count in top_regions if region in gdf.index]
@@ -143,7 +142,7 @@ def plot_highlight(hour):
         # Overlay city boundary in blue
         city_gdf.boundary.plot(ax=ax, color='blue', linewidth=2, zorder=4)
         ctx.add_basemap(ax, source=ctx.providers.CartoDB.Voyager)
-        ax.set_title(f"{title} for {pretty_day[current_day]} Hour {hour:02d}:00", fontsize=13, pad=18)
+        ax.set_title(title, fontsize=15, pad=18)
         ax.set_axis_off()
         # Add label for #1 and #50
         if len(top_regions) >= NUM_TOP:
@@ -173,8 +172,7 @@ slider.on_changed(update)
 # Button callbacks
 def make_button_callback(day):
     def callback(event):
-        global current_day
-        current_day = day
+        current_day[0] = day
         plot_highlight(int(slider.val))
     return callback
 
