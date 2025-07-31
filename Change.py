@@ -44,27 +44,22 @@ city_gdf = gpd.read_file('city_boundary.geojson')
 city_gdf = city_gdf.to_crs(epsg=3857)
 
 NUM_REGIONS = 598
-NUM_TOP = 50
+NUM_TOP = 25
 
 day_types = ['W', 'SAT', 'SUN', 'ALL']
 day_types2 = ['W', 'SAT', 'SUN']
 
-# Store results: {day: {hour: (top_origins, top_destinations)}}, and counts
-top_origins_per_file = {day: {hour: {} for hour in range(24)} for day in day_types}
-top_destinations_per_file = {day: {hour: {} for hour in range(24)} for day in day_types}
-top_combined_per_file = {day: {hour: {} for hour in range(24)} for day in day_types}
 
-# Initialize ALL as a dict to accumulate totals {hour: (top_origins, top_destinations)}
-All_top_origins = {hour: {} for hour in range(24)}
-All_top_destinations = {hour: {} for hour in range(24)}
-All_top_combined = {hour: {} for hour in range(24)}
+
+# Store results: {day: {hour: (top_origins, top_destinations)}}, and counts
+top_origins_change = {day: {hour: {} for hour in range(24)} for day in day_types}
+top_destinations_change = {day: {hour: {} for hour in range(24)} for day in day_types}
+top_combined_change = {day: {hour: {} for hour in range(24)} for day in day_types}
+
 
 for day in day_types2:
     for hour in range(24):
         filename = f"{day}{hour}.csv"
-        origin_counts = {}
-        dest_counts = {}
-        combined_counts = {}
         with open(filename, 'r') as f:
             reader = csv.reader(f)
             for row in reader:
@@ -72,33 +67,37 @@ for day in day_types2:
                     origin = int(row[0].replace('Region ', ''))
                     dest = int(row[1].replace('Region ', ''))
                     count = int(float(row[2]))
+                    
 
-                    origin_counts[origin] = origin_counts.get(origin, 0) + count
-                    dest_counts[dest] = dest_counts.get(dest, 0) + count
-                    combined_counts[origin] = combined_counts.get(origin, 0) + count
-                    combined_counts[dest] = combined_counts.get(dest, 0) + count
+                    top_origins_change[day][hour][origin] = top_origins_change[day][hour].get(origin, 0) + count
+                    top_destinations_change[day][hour][dest] = top_destinations_change[day][hour].get(dest, 0) + count
+                    top_combined_change[day][hour][origin] = top_combined_change[day][hour].get(origin, 0) + count
+                    top_combined_change[day][hour][dest] = top_combined_change[day][hour].get(dest, 0) + count
 
-                    All_top_origins[hour][origin] = All_top_origins[hour].get(origin, 0) + count
-                    All_top_destinations[hour][dest] = All_top_destinations[hour].get(dest, 0) + count
-                    All_top_combined[hour][origin] = All_top_combined[hour].get(origin, 0) + count
-                    All_top_combined[hour][dest] = All_top_combined[hour].get(dest, 0) + count
+                    top_origins_change['ALL'][hour][origin] = top_origins_change['ALL'][hour].get(origin, 0) + count
+                    top_destinations_change['ALL'][hour][dest] = top_destinations_change['ALL'][hour].get(dest, 0) + count
+                    top_combined_change['ALL'][hour][origin] = top_combined_change['ALL'][hour].get(origin, 0) + count
+                    top_combined_change['ALL'][hour][dest] = top_combined_change['ALL'][hour].get(dest, 0) + count
+
+
+                    top_origins_change[day][(hour - 1) % 24][origin] = top_origins_change[day][(hour - 1) % 24].get(origin, 0) - count
+                    top_destinations_change[day][(hour - 1) % 24][dest] = top_destinations_change[day][(hour - 1) % 24].get(dest, 0) - count
+                    top_combined_change[day][(hour - 1) % 24][origin] = top_combined_change[day][(hour - 1) % 24].get(origin, 0) - count
+                    top_combined_change[day][(hour - 1) % 24][dest] = top_combined_change[day][(hour - 1) % 24].get(dest, 0) - count
+
+                    top_origins_change['ALL'][(hour - 1) % 24][origin] = top_origins_change['ALL'][(hour - 1) % 24].get(origin, 0) - count
+                    top_destinations_change['ALL'][(hour - 1) % 24][dest] = top_destinations_change['ALL'][(hour - 1) % 24].get(dest, 0) - count
+                    top_combined_change['ALL'][(hour - 1) % 24][origin] = top_combined_change['ALL'][(hour - 1) % 24].get(origin, 0) - count
+                    top_combined_change['ALL'][(hour - 1) % 24][dest] = top_combined_change['ALL'][(hour - 1) % 24].get(dest, 0) - count
                 except Exception as e:
                     continue
-        # Store as list of (region, count) tuples, sorted by count
-        top_origins = heapq.nlargest(NUM_TOP, origin_counts.items(), key=lambda x: x[1])
-        top_destinations = heapq.nlargest(NUM_TOP, dest_counts.items(), key=lambda x: x[1])
-        top_combined = heapq.nlargest(NUM_TOP, combined_counts.items(), key=lambda x: x[1])
 
-
-        top_origins_per_file[day][hour] = top_origins
-        top_destinations_per_file[day][hour] = top_destinations
-        top_combined_per_file[day][hour] = top_combined
-
-# At the end, keep only the top 50 in ALL
-for hour in range(24):
-    top_origins_per_file['ALL'][hour] = heapq.nlargest(NUM_TOP, All_top_origins[hour].items(), key=lambda x: x[1])
-    top_destinations_per_file['ALL'][hour] = heapq.nlargest(NUM_TOP, All_top_destinations[hour].items(), key=lambda x: x[1])
-    top_combined_per_file['ALL'][hour] = heapq.nlargest(NUM_TOP, All_top_combined[hour].items(), key=lambda x: x[1])
+for day in day_types:
+    for hour in range(24):
+        top_origins_change[day][hour] = heapq.nlargest(NUM_TOP, top_origins_change[day][hour].items(), key=lambda x: x[1])
+        top_destinations_change[day][hour] = heapq.nlargest(NUM_TOP, top_destinations_change[day][hour].items(), key=lambda x: x[1])
+        top_combined_change[day][hour] = heapq.nlargest(NUM_TOP, top_combined_change[day][hour].items(), key=lambda x: x[1])
+    
 
 # Load region polygons from MAP.json
 geo_path = "MAP.json"
@@ -210,10 +209,10 @@ overlay_landmarks = [False]
 # Plot function
 def plot_highlight(hour):
     # Set main title with day and hour
-    fig.suptitle(f"Top {NUM_TOP} Regions for {pretty_day[current_day[0]]}, Hour {hour:02d}:00", fontsize=18, y=0.97)
+    fig.suptitle(f"Top {NUM_TOP} Changes in Regions for {pretty_day[current_day[0]]}, from {((hour - 1) % 24):02d}:00 to {hour:02d}:00", fontsize=18, y=0.97)
     for ax, top_regions, title in zip(
         [ax1, ax2, ax3],
-        [top_origins_per_file[current_day[0]][hour], top_destinations_per_file[current_day[0]][hour], top_combined_per_file[current_day[0]][hour]],
+        [top_origins_change[current_day[0]][hour], top_destinations_change[current_day[0]][hour], top_combined_change[current_day[0]][hour]],
         ["Origins", "Destinations", "Combined"]):
         ax.cla()
         region_indices = [region for region, count in top_regions if region in gdf.index]
@@ -256,20 +255,23 @@ def plot_highlight(hour):
 
 plot_highlight(0)
 
-# Slider update
-def update(val):
+
+# Function to switch day type
+def switch_day(day, button):
+    current_day[0] = day
     plot_highlight(int(slider.val))
-slider.on_changed(update)
 
 # Button callbacks
-def make_button_callback(day):
+def make_button_callback(day, button):
     def callback(event):
-        current_day[0] = day
-        plot_highlight(int(slider.val))
+        switch_day(day, button)
     return callback
 
 for btn, day in zip(buttons, day_types):
-    btn.on_clicked(make_button_callback(day))
+    btn.on_clicked(make_button_callback(day, btn))
+
+# Set initial day type (Weekday is selected by default)
+switch_day('W', buttons[0])
 
 # BRT toggle button callback
 def toggle_brt(event):
@@ -282,5 +284,30 @@ def toggle_poi(event):
     overlay_landmarks[0] = not overlay_landmarks[0]
     plot_highlight(int(slider.val))
 poi_button.on_clicked(toggle_poi)
+
+
+# Slider update
+def update(val):
+    plot_highlight(int(slider.val))
+slider.on_changed(update)
+
+# Keyboard event handler for arrow keys
+def on_key(event):
+    if event.key == 'left':
+        slider.set_val((slider.val - 1) % 24)
+    elif event.key == 'right':
+        slider.set_val((slider.val + 1) % 24)
+    elif event.key == 'tab':
+        if (current_day[0] == 'W'):
+            switch_day('SAT', buttons[1])
+        elif (current_day[0] == 'SAT'):
+            switch_day('SUN', buttons[2])
+        elif (current_day[0] == 'SUN'):
+            switch_day('ALL', buttons[3])
+        elif (current_day[0] == 'ALL'):
+            switch_day('W', buttons[0])
+
+# Connect the key press event
+fig.canvas.mpl_connect('key_press_event', on_key)
 
 plt.show()
