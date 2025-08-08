@@ -44,7 +44,7 @@ city_gdf = gpd.read_file('city_boundary.geojson')
 city_gdf = city_gdf.to_crs(epsg=3857)
 
 NUM_REGIONS = 598
-NUM_TOP = 25
+NUM_TOP = 1
 
 day_types = ['W', 'SAT', 'SUN', 'ALL']
 day_types2 = ['W', 'SAT', 'SUN']
@@ -209,7 +209,7 @@ overlay_landmarks = [False]
 # Plot function
 def plot_highlight(hour):
     # Set main title with day and hour
-    fig.suptitle(f"Top {NUM_TOP} Changes in Regions for {pretty_day[current_day[0]]}, from {((hour - 1) % 24):02d}:00 to {hour:02d}:00", fontsize=18, y=0.97)
+    fig.suptitle(f"Top {NUM_TOP} Changes in Regions for {pretty_day[current_day[0]]}, between {((hour - 1) % 24):02d}:00-{hour:02d}:00 to {hour:02d}:00-{((hour + 1) % 24):02d}:00", fontsize=18, y=0.97)
     for ax, top_regions, title in zip(
         [ax1, ax2, ax3],
         [top_origins_change[current_day[0]][hour], top_destinations_change[current_day[0]][hour], top_combined_change[current_day[0]][hour]],
@@ -233,7 +233,7 @@ def plot_highlight(hour):
         if len(top_regions) >= NUM_TOP:
             trip1 = top_regions[0][1]
             trip50 = top_regions[NUM_TOP-1][1]
-            ax.text(0.01, 0.99, f"#1: {trip1} trips\n#50: {trip50} trips", transform=ax.transAxes,
+            ax.text(0.01, 0.99, f"#1: {trip1} trips\n#{NUM_TOP}: {trip50} trips", transform=ax.transAxes,
                     fontsize=14, color="black", va="top", ha="left",
                     bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
         elif len(top_regions) > 0:

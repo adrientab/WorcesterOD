@@ -44,7 +44,7 @@ city_gdf = gpd.read_file('city_boundary.geojson')
 city_gdf = city_gdf.to_crs(epsg=3857)
 
 NUM_REGIONS = 598
-NUM_TOP = 50
+NUM_TOP = 1
 
 day_types = ['W', 'SAT', 'SUN', 'ALL']
 day_types2 = ['W', 'SAT', 'SUN']
@@ -234,7 +234,7 @@ def plot_highlight(hour):
         if len(top_regions) >= NUM_TOP:
             trip1 = top_regions[0][1]
             trip50 = top_regions[NUM_TOP-1][1]
-            ax.text(0.01, 0.99, f"#1: {trip1} trips\n#50: {trip50} trips", transform=ax.transAxes,
+            ax.text(0.01, 0.99, f"#1: {trip1} trips\n#{NUM_TOP}: {trip50} trips", transform=ax.transAxes,
                     fontsize=14, color="black", va="top", ha="left",
                     bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
         elif len(top_regions) > 0:
@@ -261,15 +261,22 @@ def update(val):
     plot_highlight(int(slider.val))
 slider.on_changed(update)
 
+    # Function to switch day type
+def switch_day(day, button):
+    current_day[0] = day
+    plot_highlight(int(slider.val))
+
 # Button callbacks
-def make_button_callback(day):
+def make_button_callback(day, button):
     def callback(event):
-        current_day[0] = day
-        plot_highlight(int(slider.val))
+        switch_day(day, button)
     return callback
 
 for btn, day in zip(buttons, day_types):
-    btn.on_clicked(make_button_callback(day))
+    btn.on_clicked(make_button_callback(day, btn))
+
+# Set initial day type (Weekday is selected by default)
+switch_day('W', buttons[0])
 
 # BRT toggle button callback
 def toggle_brt(event):
@@ -282,5 +289,25 @@ def toggle_poi(event):
     overlay_landmarks[0] = not overlay_landmarks[0]
     plot_highlight(int(slider.val))
 poi_button.on_clicked(toggle_poi)
+
+
+# Keyboard event handler for arrow keys
+def on_key(event):
+    if event.key == 'left':
+        slider.set_val((slider.val - 1) % 24)
+    elif event.key == 'right':
+        slider.set_val((slider.val + 1) % 24)
+    elif event.key == 'tab':
+        if (current_day[0] == 'W'):
+            switch_day('SAT', buttons[1])
+        elif (current_day[0] == 'SAT'):
+            switch_day('SUN', buttons[2])
+        elif (current_day[0] == 'SUN'):
+            switch_day('ALL', buttons[3])
+        elif (current_day[0] == 'ALL'):
+            switch_day('W', buttons[0])
+
+# Connect the key press event
+fig.canvas.mpl_connect('key_press_event', on_key)
 
 plt.show()

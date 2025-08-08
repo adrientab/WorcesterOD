@@ -254,15 +254,22 @@ def update(val):
     plot_highlight(int(slider.val))
 slider.on_changed(update)
 
+# Function to switch day type
+def switch_day(day, button):
+    current_day[0] = day
+    plot_highlight(int(slider.val))
+
 # Button callbacks
-def make_button_callback(day):
+def make_button_callback(day, button):
     def callback(event):
-        current_day[0] = day
-        plot_highlight(int(slider.val))
+        switch_day(day, button)
     return callback
 
 for btn, day in zip(buttons, day_types):
-    btn.on_clicked(make_button_callback(day))
+    btn.on_clicked(make_button_callback(day, btn))
+
+# Set initial day type (Weekday is selected by default)
+switch_day('W', buttons[0])
 
 # BRT toggle button callback
 def toggle_brt(event):
@@ -275,5 +282,24 @@ def toggle_poi(event):
     overlay_landmarks[0] = not overlay_landmarks[0]
     plot_highlight(int(slider.val))
 poi_button.on_clicked(toggle_poi)
+
+# Keyboard event handler for arrow keys
+def on_key(event):
+    if event.key == 'left':
+        slider.set_val((slider.val - 1) % 24)
+    elif event.key == 'right':
+        slider.set_val((slider.val + 1) % 24)
+    elif event.key == 'tab':
+        if (current_day[0] == 'W'):
+            switch_day('SAT', buttons[1])
+        elif (current_day[0] == 'SAT'):
+            switch_day('SUN', buttons[2])
+        elif (current_day[0] == 'SUN'):
+            switch_day('ALL', buttons[3])
+        elif (current_day[0] == 'ALL'):
+            switch_day('W', buttons[0])
+
+# Connect the key press event
+fig.canvas.mpl_connect('key_press_event', on_key)
 
 plt.show()
