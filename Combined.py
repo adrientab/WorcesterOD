@@ -1,3 +1,7 @@
+# This script plots the top 100 regions for each hour of the day 
+# and overlays the BRT stations and landmarks.
+# It is used to visualize the most popular regions in the city.
+
 import csv
 import heapq
 import os
@@ -43,6 +47,19 @@ overlay_brt = [False]
 city_gdf = gpd.read_file('city_boundary.geojson')
 city_gdf = city_gdf.to_crs(epsg=3857)
 
+# Define adjacency in grid
+def is_adjacent_or_same(r1, r2):
+    if r1 == r2:
+        return True
+    row1, col1 = divmod(r1-1, rows)
+    row2, col2 = divmod(r2-1, rows)
+    row1 += 1
+    row2 += 1
+    col1 += 1
+    col2 += 1
+    return abs(row1 - row2) + abs(col1 - col2) == 1 or (abs(row1 - row2) == 1 and abs(col1 - col2) == 1)
+
+
 NUM_REGIONS = 598
 NUM_TOP = 1
 
@@ -58,6 +75,7 @@ top_combined_per_file = {day: {hour: {} for hour in range(24)} for day in day_ty
 All_top_origins = {hour: {} for hour in range(24)}
 All_top_destinations = {hour: {} for hour in range(24)}
 All_top_combined = {hour: {} for hour in range(24)}
+
 
 for day in day_types2:
     for hour in range(24):

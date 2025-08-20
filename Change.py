@@ -1,3 +1,6 @@
+# This script plots the top 10 changes in regions for a given day and hour.
+# It is used to visualize the changes in regions over time.
+
 import csv
 import heapq
 import os
@@ -44,7 +47,7 @@ city_gdf = gpd.read_file('city_boundary.geojson')
 city_gdf = city_gdf.to_crs(epsg=3857)
 
 NUM_REGIONS = 598
-NUM_TOP = 1
+NUM_TOP = 10
 
 day_types = ['W', 'SAT', 'SUN', 'ALL']
 day_types2 = ['W', 'SAT', 'SUN']

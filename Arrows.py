@@ -14,8 +14,6 @@ from matplotlib.patches import FancyArrowPatch
 from matplotlib.colors import LinearSegmentedColormap
 import warnings
 
-# Suppress OGR field type warnings
-warnings.filterwarnings('ignore', message='.*unsupported OGR type.*')
 
 # BRT station coordinates (WGS84)
 brt_stations = [
@@ -46,8 +44,54 @@ overlay_brt = [False]
 city_gdf = gpd.read_file('city_boundary.geojson')
 city_gdf = city_gdf.to_crs(epsg=3857)
 
+# Load region polygons from MAP.json, stripping unsupported list fields to avoid OGR warnings
+geo_path = "MAP.json"
+with open(geo_path, 'r') as _f:
+    _geojson_raw = json.load(_f)
+for _feature in _geojson_raw.get('features', []):
+    _props = _feature.get('properties', {})
+    if 'regionRoles' in _props:
+        _props.pop('regionRoles', None)
+gdf = gpd.GeoDataFrame.from_features(_geojson_raw.get('features', []), crs="EPSG:4326")
+gdf.set_index("i", inplace=True)
+gdf = gdf.to_crs(epsg=3857)
+gdf["centroid"] = gdf.geometry.centroid
+
+# Helper: check if two regions are adjacent (share a boundary or point) or the same
+def is_adjacent_or_same(origin, destination, tolerance_meters=1.0):
+    if origin == destination:
+        return True
+    # Ensure both regions exist
+    if origin not in gdf.index or destination not in gdf.index:
+        return False
+    geom_origin = gdf.loc[origin].geometry
+    geom_destination = gdf.loc[destination].geometry
+    if geom_origin is None or geom_destination is None:
+        return False
+    # Clean geometries to avoid topology errors
+    geom_origin_clean = geom_origin.buffer(0)
+    geom_destination_clean = geom_destination.buffer(0)
+    # Primary: exact topological adjacency (shared edge or corner, interiors do not overlap)
+    if geom_origin_clean.touches(geom_destination_clean):
+        return True
+    # Allow tiny gaps along borders due to precision issues, but do not treat overlapping as touching
+    try:
+        if (
+            not geom_origin_clean.intersects(geom_destination_clean)
+            and geom_origin_clean.boundary.distance(geom_destination_clean.boundary) <= float(tolerance_meters)
+        ):
+            return True
+    except Exception:
+        pass
+    return False
+
+
+
 NUM_REGIONS = 598
 NUM_TOP = 30
+
+
+
 
 day_types = ['W', 'SAT', 'SUN', 'ALL']
 day_types2 = ['W', 'SAT', 'SUN']
@@ -68,6 +112,8 @@ for day in day_types2:
                 try:
                     origin = int(row[0].replace('Region ', ''))
                     dest = int(row[1].replace('Region ', ''))
+                    if is_adjacent_or_same(origin, dest):
+                        continue
                     count = int(float(row[2]))
 
                     counts[(origin, dest)] = count
@@ -82,14 +128,6 @@ for day in day_types2:
 # At the end, keep only the top 50 in ALL
 for hour in range(24):
     top_per_file['ALL'][hour] = heapq.nlargest(NUM_TOP, all_top[hour].items(), key=lambda x: x[1])
-
-# Load region polygons from MAP.json
-geo_path = "MAP.json"
-gdf = gpd.read_file(geo_path)
-gdf.set_index("i", inplace=True)
-gdf = gdf.to_crs(epsg=3857)
-gdf["centroid"] = gdf.geometry.centroid
-
 
 # State for current day type
 current_day = ['W']  # Use list for mutability in nested functions
@@ -191,9 +229,7 @@ overlay_landmarks = [False]
 # Custom colormap from red to green, with more intermediate steps for better color variation
 red_green_cmap = LinearSegmentedColormap.from_list('RedGreen', ['red', 'darkorange', 'limegreen', 'green'], N=256)
 
-# Helper: check if two regions are adjacent or the same (for now, just same)
-def is_adjacent_or_same(origin, destination):
-    return origin == destination
+ 
 
 # Plot function
 def plot_highlight(hour):
